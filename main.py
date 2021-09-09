@@ -48,6 +48,13 @@ days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","1
 year = "2020"
 countries_of_interest = ["China"]
 
+countries = []
+#Countries of interest
+Afghanistan = {}
+Albania = {}
+Algeria = {}
+Andorra = {}
+
 #main
 while not ((month == "09") and (day == "08") and (year == "2021")):
   raw_file = raw_csv(month + "-" + day + "-" + year)
@@ -72,7 +79,45 @@ while not ((month == "09") and (day == "08") and (year == "2021")):
   elif (day == "01") and (month == "02") and (year == "2021"):
     days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"]
   elif (day == "01"):
-    print("something went wrong!")
-    print(month + "-" + day + "-" + year)
-    break
-print(data_set_dictionary["09-02-2021"])
+    raise Exception("Something went wrong at",month + "-" + day + "-" + year)
+#print(data_set_dictionary["09-02-2021"])
+
+#"""
+#variable redefining
+month = "01"
+months = ["01","02","03","04","05","06","07","08","09","10","11","12"]
+day = "22"
+days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
+year = "2020"
+
+#translating cases per country by day to cases per day by country
+for x in range(len(data_set_dictionary)):
+  #break
+  for country in countries:
+    #break
+    for key in data_set_dictionary[month + "-" + day + "-" + year].keys():
+      #break
+      if country in key:
+        country[month + "-" + day + "-" + year] = data_set_dictionary[month + "-" + day + "-" + year][key]
+        break
+  try:
+    day = days[days.index(day) + 1]
+  except IndexError:
+    try:
+      month = months[months.index(month) + 1]
+      day = days[0]
+    except IndexError:
+      year = "2021"
+      month = months[0]
+      day = days[0]
+  if (day == "01") and (month in ("01","03","05","07","08","10","12")):
+    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
+  elif (day == "01") and (month in ("04","06","09","11")):
+    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+  elif (day == "01") and (month == "02") and (year == "2020"):
+    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"]
+  elif (day == "01") and (month == "02") and (year == "2021"):
+    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"]
+  elif (day == "01"):
+    raise Exception("Something went wrong at",month + "-" + day + "-" + year)
+#"""
