@@ -9,7 +9,8 @@ STEPS TO SUCCESS
 #imports
 import pandas as pd
 pd.set_option("display.max_columns", None, "display.max_rows", 5)
-#import matplotlib.pyplot as plt
+from nasty import REFERENCE
+import matplotlib.pyplot as plt
 #import numpy as np
 
 #method definition
@@ -42,21 +43,21 @@ def raw_csv(_date):
 #variable declaration and initialization
 data_set_dictionary = {}
 month = "01"
-months = ["01","02","03","04","05","06","07","08","09","10","11","12"]
+months = REFERENCE.months
 day = "22"
-days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
+days = REFERENCE.thirty_one
 year = "2020"
-countries_of_interest = ["China"]
+labels = [0]
+countries_iterated = []
 
-countries = []
 #Countries of interest
-Afghanistan = {}
-Albania = {}
-Algeria = {}
-Andorra = {}
+
+
+
 
 #main
 while not ((month == "09") and (day == "08") and (year == "2021")):
+  labels.append(month + "-" + day)
   raw_file = raw_csv(month + "-" + day + "-" + year)
   data_set_dictionary[month + "-" + day + "-" + year] = parse_raw_to_list(raw_file)
   print("Data set for",month + "-" + day + "-" + year,"parsed.")
@@ -70,36 +71,38 @@ while not ((month == "09") and (day == "08") and (year == "2021")):
       year = "2021"
       month = months[0]
       day = days[0]
-  if (day == "01") and (month in ("01","03","05","07","08","10","12")):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
-  elif (day == "01") and (month in ("04","06","09","11")):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+  if (day == "01") and (month in REFERENCE.thirty_one_months):
+    days = REFERENCE.thirty_one
+  elif (day == "01") and (month in REFERENCE.thirty_months):
+    days = REFERENCE.thirty
   elif (day == "01") and (month == "02") and (year == "2020"):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"]
+    days = REFERENCE.twenty_nine
   elif (day == "01") and (month == "02") and (year == "2021"):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"]
+    days = REFERENCE.twenty_eight
   elif (day == "01"):
     raise Exception("Something went wrong at",month + "-" + day + "-" + year)
-#print(data_set_dictionary["09-02-2021"])
 
 #"""
 #variable redefining
 month = "01"
-months = ["01","02","03","04","05","06","07","08","09","10","11","12"]
 day = "22"
-days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
+days = REFERENCE.thirty_one
 year = "2020"
 
 #translating cases per country by day to cases per day by country
 for x in range(len(data_set_dictionary)):
   #break
-  for country in countries:
+  for country in REFERENCE.countries:
     #break
     for key in data_set_dictionary[month + "-" + day + "-" + year].keys():
       #break
-      if country in key:
-        country[month + "-" + day + "-" + year] = data_set_dictionary[month + "-" + day + "-" + year][key]
+      if country["name"] in key:
+        country[1].append(int(data_set_dictionary[month + "-" + day + "-" + year][key]))
+        countries_iterated.append(country["name"])
+        #print(country[1])
         break
+    if country["name"] not in countries_iterated:
+      country[1].append(0)
   try:
     day = days[days.index(day) + 1]
   except IndexError:
@@ -110,14 +113,33 @@ for x in range(len(data_set_dictionary)):
       year = "2021"
       month = months[0]
       day = days[0]
-  if (day == "01") and (month in ("01","03","05","07","08","10","12")):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"]
+  if (day == "01") and (month in REFERENCE.thirty_one_months):
+    days = REFERENCE.thirty_one
   elif (day == "01") and (month in ("04","06","09","11")):
-    days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+    days = REFERENCE.thirty
   elif (day == "01") and (month == "02") and (year == "2020"):
     days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"]
   elif (day == "01") and (month == "02") and (year == "2021"):
     days = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"]
   elif (day == "01"):
     raise Exception("Something went wrong at",month + "-" + day + "-" + year)
+"""
+#print(countries)
+for country in REFERENCE.countries:
+  print(country)
+  print("\n\n\n")
 #"""
+
+"""
+for item in labels:
+  item = ""#"""
+fig, ax = plt.subplots()
+width = 1
+for country in REFERENCE.countries:
+  ax.plot(labels[0:len(country[1])], country[1], width, label=country["name"])
+
+ax.set_ylabel('COVID19 cases')
+ax.set_title('COVID19 worldwide cases by country')
+ax.legend()
+
+plt.show()
